@@ -1,5 +1,4 @@
 import pandas as pd
-from tqdm import tqdm
 import numpy as np
 import os
 from PIL import Image
@@ -8,21 +7,21 @@ from sklearn.model_selection import train_test_split
 def get_data():
   '''get image data'''
 
-  path_0 = 'data/train_subset/0/'
-  path_1 = 'data/train_subset/1/'
-  path_2 = 'data/test_subset/0/'
-  path_3 = 'data/test_subset/1/'
-  path_4 = 'val_subset/0/'
-  path_5 = 'val_subset/1/'
+  path_0 = 'SolarVision/data/train_subset/0/'
+  path_1 = 'SolarVision/data/train_subset/1/'
+  path_2 = 'SolarVision/data/test_subset/0/'
+  path_3 = 'SolarVision/data/test_subset/1/'
+  #path_4 = 'SolarVision/data/val_subset/0/'
+  #path_5 = 'SolarVision/data/val_subset/1/'
 
-  path = [path_0, path_1, path_2, path_3, path_4, path_5]
+  path = [path_0, path_1, path_2, path_3] #path_4, path_5]
   X_train = []
   X_test = []
   y_train = []
   y_test = []
 
   for p in path:
-    for img in os.listdir(p):
+    for img in os.listdir(p)[:200]:
       if img.startswith('.'):
         continue
       else:

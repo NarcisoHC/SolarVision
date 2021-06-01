@@ -1,6 +1,7 @@
 from tensorflow.keras import models
 from tensorflow.keras import layers
 from tensorflow.keras.callbacks import EarlyStopping
+from SolarVision.data import get_data
 
 class Trainer():
     def __init__(self, X_train, X_test, y_train, y_test):

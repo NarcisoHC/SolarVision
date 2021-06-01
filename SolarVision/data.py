@@ -8,12 +8,12 @@ from sklearn.model_selection import train_test_split
 def get_data():
   '''get image data'''
 
-  path_0 = 'train/0/'
-  path_1 = 'train/1/'
-  path_2 = 'test/0/'
-  path_3 = 'test/1/'
-  path_4 = 'val/0/'
-  path_5 = 'val/1/'
+  path_0 = 'data/train_subset/0/'
+  path_1 = 'data/train_subset/1/'
+  path_2 = 'data/test_subset/0/'
+  path_3 = 'data/test_subset/1/'
+  path_4 = 'val_subset/0/'
+  path_5 = 'val_subset/1/'
 
   path = [path_0, path_1, path_2, path_3, path_4, path_5]
   X_train = []

@@ -29,14 +29,14 @@ def get_data():
         # image = image.resize((320, 320)) 
         if p[:19] == 'SolarVision/data/tr' or p[:19] == 'SolarVision/data/va': 
             X_train.append(np.array(image))
-            print(f'X_train len = {len(X_train)}')
+            # print(f'X_train len = {len(X_train)}')
             if p[-2] == '0': 
                 y_train.append(0)
             else:
                 y_train.append(1)
         elif p[:19] == 'SolarVision/data/te': 
             X_test.append(np.array(image))
-            print(f'X_test len = {len(X_test)}')
+            # print(f'X_test len = {len(X_test)}')
             if p[-2] == '0': 
                 y_test.append(0)
             else:
@@ -61,7 +61,7 @@ if __name__ == "__main__":
     # X_test = all_data[1]
     # y_train = all_data[2]
     # y_test = all_data[3]
-    print(X_train.shape)
-    print(X_test.shape)
-    print(len(y_train))
-    print(len(y_test))
+    # print(X_train.shape)
+    # print(X_test.shape)
+    # print(len(y_train))
+    # print(len(y_test))

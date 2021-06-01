@@ -5,7 +5,7 @@ from SolarVision.data import get_data
 
 class Trainer():
     def __init__(self, X_train, X_test, y_train, y_test):
-
+        self.model = None
         self.X_train = X_train
         self.X_test = X_test
         self.y_test = y_test
@@ -57,6 +57,8 @@ class Trainer():
 
 if __name__ == "__main__":
     X_train, X_test, y_train, y_test =  get_data() 
-    trainer = Trainer(X_train, X_test, y_train, y_test) 
+    trainer = Trainer(X_train, X_test, y_train, y_test)
+    trainer.initialize_model()
+    trainer.model_fit()
     res = trainer.evaluate() 
     print(res)

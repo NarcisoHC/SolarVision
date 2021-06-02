@@ -27,4 +27,4 @@ s3fs
 six>=1.14
 joblib
 memoized-property
-termcolor
+# termcolor # to print colored, not required, delete when sure

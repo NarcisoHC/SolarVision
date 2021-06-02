@@ -3,7 +3,7 @@
 # ----------------------------------
 
 streamlit:
-	-@streamlit run app.py
+	-@streamlit run SolarVision/frontend.py
 
 install_requirements:
 	@pip install -r requirements.txt

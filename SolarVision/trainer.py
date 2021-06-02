@@ -4,9 +4,8 @@ from tensorflow.keras.callbacks import EarlyStopping
 from SolarVision.data import get_data
 import joblib
 from taxifare.mlflowbase import MLFlowBase
-from SolarVision.params import MLFLOW_URI, EXPERIMENT_NAME #, STORAGE_LOCATION - gcp Jan/Wolfgang
-# from SolarVision.gcp import upload_model_to_gcp  # gcp Jan/Wolfgang
-# from google.cloud import storage # gcp Jan/Wolfgang
+from SolarVision.params import MLFLOW_URI, EXPERIMENT_NAME #, STORAGE_LOCATION #gcp Jan/Wolfgang
+from SolarVision.gcp import upload_model_to_gcp  # gcp Jan/Wolfgang
 
 class Trainer(MLFlowBase):
     def __init__(self, X_train, X_test, y_train, y_test):
@@ -90,8 +89,8 @@ class Trainer(MLFlowBase):
         joblib.dump(self.pipeline, 'model.joblib') # not required when we switch to gcp
         
         # Jan/Wolfgang gcp
-        # self.upload_model_to_gcp()
-        # print(f"uploaded model.joblib to gcp cloud storage under \n => {STORAGE_LOCATION}") 
+        self.upload_model_to_gcp()
+        # print(f"uploaded model.joblib to gcp cloud storage under \n => {STORAGE_LOCATION}")
 
 if __name__ == "__main__":
     X_train, X_test, y_train, y_test =  get_data() 

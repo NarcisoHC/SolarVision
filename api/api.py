@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from tensorflow.keras import models
+import numpy as np
 
 app = FastAPI()
 
@@ -16,9 +18,12 @@ def index():
     return dict(greeting="hello")
 
 @app.get("/predict")
-def predict(image):
+def predict():
     # pipeline = joblib.load('model.joblib')
     # results = pipeline.predict(X)
     # pred = float(results[0])
     # return pred
-    return dict(test="worked")
+    model = models.load_model('model.h5')
+    test_image = np.zeros(307200).reshape(1,320,320,3)
+    pred = model.predict_classes(test_image)[0][0]
+    return dict(test = pred.tolist())

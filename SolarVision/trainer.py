@@ -61,7 +61,7 @@ class Trainer(MLFlowBase):
                     metrics=['accuracy'])
 
         self.model = model
-        self.params_model = params_model
+        self.mlflow_log_param(params_model)
 
     def model_fit(self):
         '''fit the model'''
@@ -76,12 +76,13 @@ class Trainer(MLFlowBase):
                         callbacks=[es],
                         verbose=0)
         
-        self.params_fit = params_fit
+        self.mlflow_log_param(params_fit)
 
     def evaluate(self):
         '''evaluates the model on test data and return accuracy'''
         evaluation = self.model.evaluate(self.X_test, self.y_test) 
         accuracy = evaluation[1]
+        self.mlflow_log_metric("accuracy", accuracy)
         return accuracy 
 
     def save_model(self):
@@ -91,32 +92,6 @@ class Trainer(MLFlowBase):
         # Jan/Wolfgang gcp
         # self.upload_model_to_gcp()
         # print(f"uploaded model.joblib to gcp cloud storage under \n => {STORAGE_LOCATION}") 
-            
-    # instance method
-    def train(self):
-        # create a new run
-        self.mlflow_create_run()
-
-        # get data
-        X_train, X_test, y_train, y_test =  get_data() 
-
-        # train model
-        trainer = Trainer(X_train, X_test, y_train, y_test)
-        trainer.initialize_model()
-        trainer.model_fit()
-
-        # log the params (name and the value)
-        self.mlflow_log_param(self.params_model)
-        self.mlflow_log_param(self.params_fit)
-
-        # evaluate the model
-        accuracy = trainer.evaluate() 
-        self.mlflow_log_metric("accuracy", accuracy)
-
-        # save the model
-        self.save_model(trainer)
-
-        return trainer
 
 if __name__ == "__main__":
     X_train, X_test, y_train, y_test =  get_data() 

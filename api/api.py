@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from tensorflow.keras import models
 import numpy as np
+from PIL import Image
+from google.cloud import storage
 
 app = FastAPI()
 
@@ -19,11 +21,20 @@ def index():
 
 @app.get("/predict")
 def predict():
-    # pipeline = joblib.load('model.joblib')
-    # results = pipeline.predict(X)
-    # pred = float(results[0])
-    # return pred
-    model = models.load_model('model.h5')
-    test_image = np.zeros(307200).reshape(1,320,320,3)
-    pred = model.predict_classes(test_image)[0][0]
-    return dict(test = pred.tolist())
+
+    bucket_name = "solarvision-test"
+    source_blob_name = "data/data/test_subset/0/5.919714944045901,51.04547096048374.png"
+    
+    storage_client = storage.Client()
+
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(source_blob_name)
+    blob.download_to_filename("test_image.png")
+    
+    image = Image.open("test_image.png").convert('RGB')
+    image = np.array(image).reshape(1,320,320,3)/255
+
+    model = models.load_model('sv_model.h5')
+    pred = model.predict_classes(image)[0][0].tolist()
+    
+    return dict(test = pred)

@@ -1,4 +1,6 @@
 streamlit
+uuid
+
 
 # packaging
 pip>=9

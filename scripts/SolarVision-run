@@ -1,2 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+from SolarVision.trainer import Trainer
+
+Trainer().train()

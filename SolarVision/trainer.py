@@ -91,6 +91,16 @@ class Trainer(MLFlowBase):
         # Jan/Wolfgang gcp
         self.upload_model_to_gcp()
         # print(f"uploaded model.joblib to gcp cloud storage under \n => {STORAGE_LOCATION}")
+        
+    def train(self):
+        X_train, X_test, y_train, y_test =  get_data() 
+        trainer = Trainer(X_train, X_test, y_train, y_test)
+        trainer.initialize_model()
+        trainer.model_fit()
+        res = trainer.evaluate() 
+        trainer.save_model()
+        print(f'accuracy: {res}')
+        return trainer
 
 if __name__ == "__main__":
     X_train, X_test, y_train, y_test =  get_data() 

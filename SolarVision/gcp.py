@@ -11,7 +11,7 @@ def upload_model_to_gcp(rm=False):
     
     local_model_name = 'model.joblib'
     # storage_location = f"models/{MODEL_NAME}/{MODEL_VERSION}/{local_model_name}"
-    storage_location = f"models/solarvision/v1/{local_model_name}"
+    storage_location = f"models/solarvision/{local_model_name}"
     blob = client.blob(storage_location)
     blob.upload_from_filename('model.joblib')
     # print(f"=> model.joblib uploaded to bucket {BUCKET_NAME} inside {storage_location}")

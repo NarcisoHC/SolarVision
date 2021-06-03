@@ -22,8 +22,12 @@ class MLFlowBase():
             return self.mlflow_client \
                 .get_experiment_by_name(self.experiment_name).experiment_id
 
-    def mlflow_run(self):
-        return self.mlflow_client.create_run(self.mlflow_experiment_id)
+    # def mlflow_run(self):
+    #     return self.mlflow_client.create_run(self.mlflow_experiment_id)
+
+    def mlflow_create_run(self):
+        self.mlflow_run = self.mlflow_client \
+            .create_run(self.mlflow_experiment_id)
 
     def mlflow_log_param(self, key, value):
         self.mlflow_client \

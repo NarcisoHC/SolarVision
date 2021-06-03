@@ -60,7 +60,10 @@ class Trainer(MLFlowBase):
                     metrics=['accuracy'])
 
         self.model = model
-        self.mlflow_log_param(params_model)
+
+        self.mlflow_create_run()
+        for k, v in params_model.items():
+            self.mlflow_log_param(k, v)
 
     def model_fit(self):
         '''fit the model'''
@@ -75,31 +78,52 @@ class Trainer(MLFlowBase):
                         callbacks=[es],
                         verbose=0)
         
-        self.mlflow_log_param(params_fit)
+        self.params_fit = params_fit
+        
+        self.mlflow_create_run()
+        for k, v in params_fit.items():
+            self.mlflow_log_param(k, v)
 
     def evaluate(self):
         '''evaluates the model on test data and return accuracy'''
         evaluation = self.model.evaluate(self.X_test, self.y_test) 
-        accuracy = evaluation[1]
-        self.mlflow_log_metric("accuracy", accuracy)
-        return accuracy 
+        self.accuracy = evaluation[1]
+        
+        self.mlflow_create_run()
+        self.mlflow_log_metric("accuracy", self.accuracy)
 
     def save_model(self):
         '''Save the model into a .joblib format'''
-        joblib.dump(self.pipeline, 'model.joblib') # not required when we switch to gcp
+        joblib.dump(self.model, 'model.joblib') # not required when we switch to gcp
         
-        # Jan/Wolfgang gcp
-        self.upload_model_to_gcp()
+        # save model to gcp
+        upload_model_to_gcp()
         # print(f"uploaded model.joblib to gcp cloud storage under \n => {STORAGE_LOCATION}")
         
     def train(self):
+        '''get data, instanciate instance of Trainer class, initialize, compile and fit model,
+        log parameters and metrics in mlflow, evaluate and save model'''
+        # get data
         X_train, X_test, y_train, y_test =  get_data() 
+        
+        # instanciate class
         trainer = Trainer(X_train, X_test, y_train, y_test)
+        
+        # initiate and compile model
         trainer.initialize_model()
+        
+        # fit model
         trainer.model_fit()
+        
+        # evaluate model
         res = trainer.evaluate() 
+        
+        # save model
         trainer.save_model()
+        
+        # print model, to be deleted when everything works
         print(f'accuracy: {res}')
+        
         return trainer
 
 if __name__ == "__main__":
@@ -107,6 +131,7 @@ if __name__ == "__main__":
     trainer = Trainer(X_train, X_test, y_train, y_test)
     trainer.initialize_model()
     trainer.model_fit()
-    res = trainer.evaluate() 
+    res = trainer.evaluate()
+    trainer.save_model()
     print(f'accuracy: {res}')
     

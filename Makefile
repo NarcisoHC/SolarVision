@@ -64,7 +64,7 @@ LOCAL_PATH=SolarVision/data
 PROJECT_ID=onyx-virtue-310514
 
 # bucket name
-BUCKET_NAME=solarvision-test
+BUCKET_NAME=wagon-data-606-caduff
 
 # bucket directory in which to store the uploaded file (we choose to name this data as a convention)
 BUCKET_FOLDER=data

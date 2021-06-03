@@ -20,11 +20,12 @@ def index():
     return dict(greeting="hello")
 
 @app.get("/predict")
-def predict():
+def predict(upload):
 
     bucket_name = "solarvision-test"
-    source_blob_name = "data/data/test_subset/0/5.919714944045901,51.04547096048374.png"
-    
+    #source_blob_name = "data/data/test_subset/0/5.919714944045901,51.04547096048374.png"
+    source_blob_name = upload
+
     storage_client = storage.Client()
 
     bucket = storage_client.bucket(bucket_name)

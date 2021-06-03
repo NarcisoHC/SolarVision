@@ -31,3 +31,4 @@ memoized-property
 termcolor
 
 uvicorn
+pillow

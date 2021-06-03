@@ -109,3 +109,4 @@ if __name__ == "__main__":
     trainer.model_fit()
     res = trainer.evaluate() 
     print(f'accuracy: {res}')
+    

@@ -3,7 +3,7 @@ from tensorflow.keras import layers
 from tensorflow.keras.callbacks import EarlyStopping
 from SolarVision.data import get_data
 import joblib
-from taxifare.mlflowbase import MLFlowBase
+from SolarVision.mlflowbase import MLFlowBase
 from SolarVision.params import MLFLOW_URI, EXPERIMENT_NAME #, STORAGE_LOCATION #gcp Jan/Wolfgang
 from SolarVision.gcp import upload_model_to_gcp  # gcp Jan/Wolfgang
 

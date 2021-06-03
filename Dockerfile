@@ -4,6 +4,8 @@ COPY api /api
 COPY SolarVision /SolarVision
 COPY sv_model.h5 /sv_model.h5
 COPY requirements.txt /requirements.txt
+COPY key2.json /credentials.json
+ENV GOOGLE_APPLICATION_CREDENTIALS=credentials.json
 
 RUN pip install -r requirements.txt
 

@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 import os
 import uuid
+from google.cloud import storage
 
 st.set_option('deprecation.showfileUploaderEncoding', False)
 
@@ -20,16 +21,15 @@ if uploaded_file is not None:
         uploaded_file.name = str(uuid.uuid4())
         with open(os.path.join('SolarVision/tempDir', uploaded_file.name), 'wb') as f:
             f.write(uploaded_file.getbuffer())
-
-
-#LOCAL_PATH=os.path.join('SolarVision/tempDir', uploaded_file.name)
-#BUCKET_FOLDER="XXX"
-#BUCKET_FILE_NAME=$(shell basename ${LOCAL_PATH})
-#@gsutil cp ${LOCAL_PATH} gs://${BUCKET_NAME}/${BUCKET_FOLDER}/${BUCKET_FILE_NAME}
-
+        storage_client = storage.Client()
+        bucket = storage_client.bucket('solarvision-test')
+        blob = bucket.blob(os.path.join('data/predict_image', uploaded_file.name))
+        blob.upload_from_filename(os.path.join('SolarVision/tempDir', uploaded_file.name)) 
 
 else:
     st.write('Please, upload a file') 
+
+
 
 #then, after this file is sent to GCP, and is processed for prediction, we retreive the prediction from the API:
 

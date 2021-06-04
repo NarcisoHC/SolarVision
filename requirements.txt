@@ -1,6 +1,6 @@
 streamlit
 uuid
-
+google.cloud
 
 # packaging
 pip>=9

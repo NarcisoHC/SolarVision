@@ -94,37 +94,37 @@ class Trainer(MLFlowBase):
 
     def save_model(self):
         '''Save the model into a .joblib format'''
-        joblib.dump(self.model, 'model.joblib') # not required when we switch to gcp
+        self.model.save('model.h5')
         
         # save model to gcp
         upload_model_to_gcp()
         # print(f"uploaded model.joblib to gcp cloud storage under \n => {STORAGE_LOCATION}")
         
-    def train(self):
-        '''get data, instanciate instance of Trainer class, initialize, compile and fit model,
-        log parameters and metrics in mlflow, evaluate and save model'''
-        # get data
-        X_train, X_test, y_train, y_test =  get_data() 
+    # def train(self):
+    #     '''get data, instanciate instance of Trainer class, initialize, compile and fit model,
+    #     log parameters and metrics in mlflow, evaluate and save model'''
+    #     # get data
+    #     X_train, X_test, y_train, y_test =  get_data() 
         
-        # instanciate class
-        trainer = Trainer(X_train, X_test, y_train, y_test)
+    #     # instanciate class
+    #     trainer = Trainer(X_train, X_test, y_train, y_test)
         
-        # initiate and compile model
-        trainer.initialize_model()
+    #     # initiate and compile model
+    #     trainer.initialize_model()
         
-        # fit model
-        trainer.model_fit()
+    #     # fit model
+    #     trainer.model_fit()
         
-        # evaluate model
-        res = trainer.evaluate() 
+    #     # evaluate model
+    #     res = trainer.evaluate() 
         
-        # save model
-        trainer.save_model()
+    #     # save model
+    #     trainer.save_model()
         
-        # print model, to be deleted when everything works
-        print(f'accuracy: {res}')
+    #     # print model, to be deleted when everything works
+    #     print(f'accuracy: {res}')
         
-        return trainer
+    #     return trainer
 
 if __name__ == "__main__":
     X_train, X_test, y_train, y_test =  get_data() 

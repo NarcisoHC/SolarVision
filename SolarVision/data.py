@@ -18,7 +18,7 @@ def get_data():
 
   for b in blobs:
     file_name = b.name
-    if 'data/data/train_subset' in file_name or 'data/data/val_subset' in file_name:
+    if ('data/data/train_set/' in file_name or 'data/data/val_set/' in file_name) and file_name.endswith('png'):
       blob = bucket.blob(file_name)
       blob.download_to_filename("downloaded_image.png")
       image = Image.open("downloaded_image.png").convert('RGB')
@@ -28,7 +28,7 @@ def get_data():
           y_train.append(0)
       else:
           y_train.append(1)
-    elif 'data/data/test_subset' in file_name:
+    elif 'data/data/test_set/' in file_name and file_name.endswith('png'):
       blob = bucket.blob(file_name)
       blob.download_to_filename("downloaded_image.png")
       image = Image.open("downloaded_image.png").convert('RGB')

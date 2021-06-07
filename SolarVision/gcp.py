@@ -1,19 +1,13 @@
-# Jan/Wolfgang
 import os
-
 from google.cloud import storage
-# from SolarVision.params import BUCKET_NAME, MODEL_NAME, MODEL_VERSION
-
 
 def upload_model_to_gcp(rm=False):
-    # client = storage.Client().bucket(BUCKET_NAME)
+    
     client = storage.Client().bucket('solarvision-test')
     
-    local_model_name = 'model.joblib'
-    # storage_location = f"models/{MODEL_NAME}/{MODEL_VERSION}/{local_model_name}"
-    storage_location = f"models/solarvision/{local_model_name}"
+    storage_location = 'models/solarvision-test/model.h5'
     blob = client.blob(storage_location)
-    blob.upload_from_filename('model.joblib')
+    blob.upload_from_filename('model.h5')
     # print(f"=> model.joblib uploaded to bucket {BUCKET_NAME} inside {storage_location}")
     if rm:
-        os.remove('model.joblib')
+        os.remove('model.h5')

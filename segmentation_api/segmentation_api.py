@@ -58,7 +58,7 @@ def predict():#upload):
     bucket_name = "solarvision-test"
     
     #source_blob_name = upload
-    source_blob_name = "/data/data/test_set/1/6.0091980000000005,51.810108.png"
+    source_blob_name = "data/data/test_set/1/6.0091980000000005,51.810108.png"
     storage_client = storage.Client()
 
     bucket = storage_client.bucket(bucket_name)

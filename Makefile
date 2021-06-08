@@ -135,7 +135,7 @@ run_locally:
 
 gcp_submit_training:
 	gcloud ai-platform jobs submit training ${JOB_NAME} \
-		--scale-tier standard-1
+		--scale-tier standard-1 \
 		--job-dir gs://${BUCKET_NAME}/${BUCKET_TRAINING_FOLDER} \
 		--package-path ${PACKAGE_NAME} \
 		--module-name ${PACKAGE_NAME}.${FILENAME} \

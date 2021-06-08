@@ -1,24 +1,23 @@
 from tensorflow.keras import models
 from tensorflow.keras import layers
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-from SolarVision.data import get_data
+from SolarVision.data_2 import get_data_2
 import joblib
 from SolarVision.mlflowbase import MLFlowBase
 from SolarVision.params import MLFLOW_URI, EXPERIMENT_NAME #, STORAGE_LOCATION #gcp Jan/Wolfgang
 from SolarVision.gcp import upload_model_to_gcp  # gcp Jan/Wolfgang
 
 class Trainer(MLFlowBase):
-    def __init__(self, X_train, X_test, y_train, y_test):
+    def __init__(self, train_dataset, val_dataset, test_dataset):
         '''initiate Class object'''
         super().__init__(
             EXPERIMENT_NAME,
             MLFLOW_URI
         )
         self.model = None
-        self.X_train = X_train
-        self.X_test = X_test
-        self.y_test = y_test
-        self.y_train = y_train
+        self.train_dataset = train_dataset
+        self.val_dataset = val_dataset
+        self.test_dataset = test_dataset
 
     def initialize_model(self):
         '''instanciate, compile and return the CNN model'''
@@ -67,18 +66,20 @@ class Trainer(MLFlowBase):
 
     def model_fit(self):
         '''fit the model'''
-        params_fit = {'patience': 20, 'validation_split': 0.3, 'epochs': 200, 'batch_size': 32}
+        params_fit = {'patience': 20, 'epochs': 200, 'batch_size': 32}
         
         es = EarlyStopping(patience=params_fit['patience'] ,restore_best_weights=True)
         checkpoint = ModelCheckpoint('/tmp/checkpoint', monitor='val_accuracy', save_best_only=True)
 
-        history = self.model.fit(X_train, y_train,
-                        validation_split=params_fit['validation_split'],
+        history = self.model.fit_generator(self.train_dataset,
+                        validation_data=self.val_dataset,
+                        validation_steps=50,
+                        steps_per_epoch=200,
                         epochs=params_fit['epochs'],
-                        batch_size=params_fit['batch_size'],
+                        # batch_size=params_fit['batch_size'],
                         callbacks=[es, checkpoint],
-                        verbose=0)
-        
+                        verbose=1)
+
         self.params_fit = params_fit
         
         self.mlflow_create_run()
@@ -87,8 +88,8 @@ class Trainer(MLFlowBase):
 
     def evaluate(self):
         '''evaluates the model on test data and return accuracy'''
-        evaluation = self.model.evaluate(self.X_test, self.y_test) 
-        self.accuracy = evaluation[1]
+        loss = self.model.evaluate_generator(self.test_dataset, steps=24) 
+        self.loss = loss
         
         self.mlflow_create_run()
         self.mlflow_log_metric("accuracy", self.accuracy)
@@ -100,39 +101,13 @@ class Trainer(MLFlowBase):
         # save model to gcp
         upload_model_to_gcp()
         # print(f"uploaded model.joblib to gcp cloud storage under \n => {STORAGE_LOCATION}")
-        
-    # def train(self):
-    #     '''get data, instanciate instance of Trainer class, initialize, compile and fit model,
-    #     log parameters and metrics in mlflow, evaluate and save model'''
-    #     # get data
-    #     X_train, X_test, y_train, y_test =  get_data() 
-        
-    #     # instanciate class
-    #     trainer = Trainer(X_train, X_test, y_train, y_test)
-        
-    #     # initiate and compile model
-    #     trainer.initialize_model()
-        
-    #     # fit model
-    #     trainer.model_fit()
-        
-    #     # evaluate model
-    #     res = trainer.evaluate() 
-        
-    #     # save model
-    #     trainer.save_model()
-        
-    #     # print model, to be deleted when everything works
-    #     print(f'accuracy: {res}')
-        
-    #     return trainer
 
 if __name__ == "__main__":
-    X_train, X_test, y_train, y_test =  get_data() 
-    trainer = Trainer(X_train, X_test, y_train, y_test)
+    train_dataset, val_dataset, test_dataset =  get_data_2() 
+    trainer = Trainer(train_dataset, val_dataset, test_dataset)
     trainer.initialize_model()
     trainer.model_fit()
-    res = trainer.evaluate()
     trainer.save_model()
-    print(f'accuracy: {res}')
+    res = trainer.evaluate()
+    print(f'loss: {res}')
     

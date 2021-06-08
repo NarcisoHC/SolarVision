@@ -123,7 +123,7 @@ RUNTIME_VERSION=1.15
 ##### Package params  - - - - - - - - - - - - - - - - - - -
 
 PACKAGE_NAME=SolarVision
-FILENAME=trainer
+FILENAME=trainer_2
 
 ##### Job - - - - - - - - - - - - - - - - - - - - - - - - -
 

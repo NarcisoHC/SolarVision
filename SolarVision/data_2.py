@@ -1,10 +1,16 @@
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from google.cloud import storage
 
 def get_data_2():
 
-    train_dir = 'gs://solarvision-test/data/data/train_set/'
-    val_dir = 'gs://solarvision-test/data/data/val_set/'
-    test_dir = 'gs://solarvision-test/data/data/test_set/'
+    storage_client = storage.Client()
+    bucket_name = "solarvision-test"
+
+    bucket = storage_client.bucket(bucket_name)
+
+    train_dir = f'{bucket.name}/data/data/train_set/'
+    val_dir = f'{bucket.name}/data/data/val_set/'
+    test_dir = f'{bucket.name}/data/data/test_set/'
     
     datagen = ImageDataGenerator(rescale=1./255)
     target_size = (320, 320)

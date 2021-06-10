@@ -1,24 +1,20 @@
 from tensorflow.keras import models
 from tensorflow.keras import layers
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-from SolarVision.data import get_data
+from SolarVision.data_3 import get_data_3
 import joblib
 from SolarVision.mlflowbase import MLFlowBase
 from SolarVision.params import MLFLOW_URI, EXPERIMENT_NAME #, STORAGE_LOCATION #gcp Jan/Wolfgang
 from SolarVision.gcp import upload_model_to_gcp  # gcp Jan/Wolfgang
 
 class Trainer(MLFlowBase):
-    def __init__(self, X_train, X_test, y_train, y_test):
+    def __init__(self):
         '''initiate Class object'''
         super().__init__(
             EXPERIMENT_NAME,
             MLFLOW_URI
         )
         self.model = None
-        self.X_train = X_train
-        self.X_test = X_test
-        self.y_test = y_test
-        self.y_train = y_train
 
     def initialize_model(self):
         '''instanciate, compile and return the CNN model'''
@@ -59,35 +55,35 @@ class Trainer(MLFlowBase):
                     optimizer='adam',
                     metrics=['accuracy'])
 
-        self.model = model
-
         self.mlflow_create_run()
         for k, v in params_model.items():
             self.mlflow_log_param(k, v)
+        
+        self.model = model
 
-    def model_fit(self):
+    def model_fit(self, X_train, y_train):
         '''fit the model'''
         params_fit = {'patience': 20, 'validation_split': 0.3, 'epochs': 200, 'batch_size': 32}
         
         es = EarlyStopping(patience=params_fit['patience'] ,restore_best_weights=True)
         checkpoint = ModelCheckpoint('/tmp/checkpoint', monitor='val_accuracy', save_best_only=True)
 
-        history = self.model.fit(X_train, y_train,
+        self.model.fit(X_train, y_train,
                         validation_split=params_fit['validation_split'],
                         epochs=params_fit['epochs'],
                         batch_size=params_fit['batch_size'],
                         callbacks=[es, checkpoint],
-                        verbose=0)
-        
+                        verbose=1)
+
         self.params_fit = params_fit
         
         self.mlflow_create_run()
         for k, v in params_fit.items():
             self.mlflow_log_param(k, v)
 
-    def evaluate(self):
+    def evaluate(self, X_test, y_test):
         '''evaluates the model on test data and return accuracy'''
-        evaluation = self.model.evaluate(self.X_test, self.y_test) 
+        evaluation = self.model.evaluate(X_test, y_test) 
         self.accuracy = evaluation[1]
         
         self.mlflow_create_run()
@@ -100,39 +96,20 @@ class Trainer(MLFlowBase):
         # save model to gcp
         upload_model_to_gcp()
         # print(f"uploaded model.joblib to gcp cloud storage under \n => {STORAGE_LOCATION}")
-        
-    # def train(self):
-    #     '''get data, instanciate instance of Trainer class, initialize, compile and fit model,
-    #     log parameters and metrics in mlflow, evaluate and save model'''
-    #     # get data
-    #     X_train, X_test, y_train, y_test =  get_data() 
-        
-    #     # instanciate class
-    #     trainer = Trainer(X_train, X_test, y_train, y_test)
-        
-    #     # initiate and compile model
-    #     trainer.initialize_model()
-        
-    #     # fit model
-    #     trainer.model_fit()
-        
-    #     # evaluate model
-    #     res = trainer.evaluate() 
-        
-    #     # save model
-    #     trainer.save_model()
-        
-    #     # print model, to be deleted when everything works
-    #     print(f'accuracy: {res}')
-        
-    #     return trainer
 
 if __name__ == "__main__":
-    X_train, X_test, y_train, y_test =  get_data() 
-    trainer = Trainer(X_train, X_test, y_train, y_test)
+    trainer = Trainer()
     trainer.initialize_model()
-    trainer.model_fit()
-    res = trainer.evaluate()
+    # for i in range(30):
+    X_train, X_test, y_train, y_test =  get_data_3()
+    print(X_train.shape)
+    print(X_test.shape)
+    print(len(y_train))
+    print(len(y_test))
+    trainer.model_fit(X_train, y_train)
+    print('model fitted')
     trainer.save_model()
+    print('model saved')
+    res = trainer.evaluate(X_test, y_test)
     print(f'accuracy: {res}')
     
